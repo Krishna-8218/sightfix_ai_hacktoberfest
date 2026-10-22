@@ -1,8 +1,11 @@
 # SightFix AI 🛠️
 
-**An AI-powered Windows troubleshooting assistant that helps diagnose technical problems and work toward verified fixes.**
+SightFix AI is a Python-based desktop application built with PySide6 that uses AI to diagnose and troubleshoot Windows and software development problems.
 
-SightFix AI is an open-source desktop application that combines screenshot analysis, local AI, and system diagnostics to help users identify and resolve common Windows and software development issues.
+It combines screenshot analysis using a vision-language model with system diagnostics and source-code inspection to identify potential causes, suggest targeted fixes, and help users verify whether a problem has been resolved.
+
+Unlike a traditional chatbot that only provides instructions, SightFix AI aims to assist users throughout the troubleshooting process—from understanding an error to applying and verifying a repair.
+
 
 ## Features
 
