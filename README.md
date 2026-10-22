@@ -20,6 +20,8 @@ sightfix_ai/
 └── tests/                           # Test suites
 ```
 
-## 🔄 Two Troubleshooting Workflows
-1. **Source Code Inspection & Repair Workflow**
-2. **Desktop Screenshot Diagnosis Workflow**
+## 🔒 Safety & Permissions
+- Explicit User Confirmation
+- Automatic Backups (.bak)
+- Atomic Modification & Hash Verification
+- Sensitive File Exclusion
