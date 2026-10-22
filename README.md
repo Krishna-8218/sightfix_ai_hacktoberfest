@@ -1,196 +1,233 @@
-# 🔍 SightFix AI — Desktop Troubleshooter & Automated Code Repair
+# SightFix AI 🛠️
 
-**SightFix AI** is an open-source AI desktop application that diagnoses technical problems and automatically repairs source code. It combines **desktop visual troubleshooting** with **direct source-code compiler analysis (`py_compile`)**, generating concrete, validated diff patches, safely applying them with automatic backups, and verifying results.
+### An AI-powered Windows troubleshooting assistant
 
-> **Built for the Open Source AI Hackathon**
+SightFix AI is an open-source desktop application designed to help users diagnose and resolve common Windows and software development problems using AI-powered analysis and system diagnostics.
 
-![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue)
-![License: MIT](https://img.shields.io/badge/License-MIT-green)
-![PySide6](https://img.shields.io/badge/GUI-PySide6-orange)
-![Qwen2.5-VL](https://img.shields.io/badge/Model-Qwen2.5--VL-purple)
+Instead of simply suggesting solutions, SightFix aims to bridge the gap between identifying a problem and verifying a fix. It combines screenshot understanding, diagnostic tools, and source-code inspection to investigate errors, propose solutions, and help users apply repairs with their approval.
 
----
+> **Our goal:** Observe the problem, identify its cause, propose a repair, and verify the result.
 
-## ✨ Features
+## 🚀 Key Features
 
-| Feature | Description |
+- **Screenshot-Based Diagnosis:** Analyze screenshots of Windows errors, terminal output, and application problems using a vision-language model.
+- **Code Error Detection:** Inspect source files to identify issues such as Python syntax errors, missing dependencies, and configuration problems.
+- **Network Troubleshooting:** Diagnose common connectivity issues using network commands and system diagnostic information.
+- **System Diagnostics:** Investigate common performance, storage, and application issues using relevant diagnostic tools.
+- **AI-Generated Fixes:** Generate targeted repair suggestions and proposed code changes based on available evidence.
+- **Human-in-the-Loop Repairs:** Allow users to review and approve proposed changes before they are applied.
+- **Fix Verification:** Re-run relevant checks to determine whether a proposed repair resolved the issue.
+
+*Feature availability depends on the implementation status of each module. See the roadmap for planned improvements.*
+
+## 💡 Problems SightFix AI Aims to Solve
+
+| Category | Example problems |
 |---|---|
-| 📂 **Inspect Current File** | Select a source file to read from disk and diagnose with `python -m py_compile` |
-| 🛠️ **Real Code Repair** | Generates concrete, validated source-code replacement patches with unified diffs |
-| 🔒 **Safe Patch Application** | Explicit approval required; creates automatic `.bak` backups with instant **Undo Fix** |
-| 🛡️ **Stale Diagnosis Prevention** | Every scan runs with fresh state; tokenized scan IDs prevent race conditions or stale overwrites |
-| 🖥️ **Screen Capture & Vision** | One-click desktop screenshot diagnosis for UI, terminal, or system errors |
-| ✅ **Compiler & Runtime Verification** | Re-runs `py_compile` to confirm syntax resolution, with optional script execution |
-| 🎮 **Demo Mode** | Built-in simulation of `calculate_total.py` syntax repair without an API key |
-| ⚙️ **Configurable AI Engine** | Pre-configured for local Ollama (`qwen2.5vl:3b` / `qwen2.5-vl:7b`) and OpenAI-compatible endpoints |
+| Software Development | Syntax errors, missing Python packages, compilation failures |
+| Network Connectivity | Wi-Fi connection failures, DNS issues, no internet access |
+| System Performance | High CPU or RAM usage, unresponsive applications |
+| Storage and Files | Low disk space, missing files, permission errors |
+| Application Issues | Startup crashes, dependency errors, installation failures |
+| Devices and Peripherals | Bluetooth connectivity, audio, webcam and USB issues |
+| Windows Configuration | Environment variables, service errors, update problems |
 
----
+SightFix focuses on gathering diagnostic evidence before recommending a solution. Not every issue can be repaired automatically, and some problems may require manual intervention.
 
-## 🏗️ Architecture
+## ⚙️ How It Works
 
-```
-sightfix_ai/
-├── main.py                          # Application entry point with foreground window activation
-├── config.py                        # Configuration (env vars, safety rules, sensitive file filters)
-├── run.bat                          # Desktop double-click launcher
-├── ui/
-│   ├── __init__.py
-│   ├── main_window.py               # PySide6 GUI (dashboard, code fix panel, diff viewer, workers)
-│   └── styles.py                    # Dark-theme Qt developer stylesheet
-├── services/
-│   ├── __init__.py
-│   ├── code_service.py              # File inspection, py_compile, patch validation, diffs, backup/undo
-│   ├── screenshot_service.py        # mss screen capture with ImageGrab/headless fallback
-│   ├── ai_service.py                # Vision diagnosis & structured code repair prompt integration
-│   ├── diagnosis_service.py         # Typed dataclasses (Diagnosis, CodePatch, Problem, Verification)
-│   ├── action_service.py            # Safe shell command allowlist & execution
-│   └── verification_service.py      # Screenshot-based verification orchestrator
-├── tests/
-│   ├── __init__.py
-│   ├── test_repair_workflow.py      # End-to-end tests for scenarios A through F
-│   ├── test_services.py             # 14 unit tests for services and safety controls
-│   └── test_gui.py                  # Headless offscreen Qt GUI integration tests
-├── requirements.txt
-├── .env.example
-├── .gitignore
-└── README.md
-```
+SightFix follows a diagnostic workflow:
 
----
+1. **Observe:** Capture a screenshot or select a relevant source file.
+2. **Diagnose:** Use AI to interpret the visible error and identify possible causes.
+3. **Investigate:** Inspect source code, logs, or system diagnostic output to validate the diagnosis.
+4. **Propose:** Generate a targeted repair and explain why it may work.
+5. **Approve:** Let the user review the proposed change before applying it.
+6. **Verify:** Run relevant checks again and report the actual result.
 
-## 🔄 Two Troubleshooting Workflows
-
-### 1. Source Code Inspection & Repair Workflow
-
-```
-[Select Source File] ──▶ [Read from Disk & py_compile]
-                                    │
-                                    ▼
-                          [Compiler Error Detected]
-                                    │
-                                    ▼
-                         [AI Proposes Minimal Patch]
-                                    │
-                                    ▼
-                         [Local Patch Validation]
-                       (Unique match, hash check)
-                                    │
-                                    ▼
-                      [Review Diff in UI & Approve]
-                                    │
-                                    ▼
-                    [Apply Patch + Create .bak Backup]
-                                    │
-                                    ▼
-                     [Verify with py_compile (Exit 0)]
-                                    │
-                                    ▼
-                   [Optional: Execute Script (Runtime Test)]
+```text
+User Reports a Problem
+          ↓
+Screenshot / File / Diagnostics
+          ↓
+AI Analysis + Evidence Collection
+          ↓
+Identify Likely Root Cause
+          ↓
+Generate Proposed Repair
+          ↓
+User Reviews and Approves
+          ↓
+Apply Repair
+          ↓
+Run Verification Checks
+          ↓
+Report the Result
 ```
 
-### 2. Desktop Screenshot Diagnosis Workflow
+## 🧰 Tech Stack
 
-```
-[Diagnose My Screen] ──▶ [Capture Screenshot] ──▶ [Analyze with Vision AI]
-                                                           │
-                                                           ▼
-                                                [Diagnose Visible Error]
-                                                           │
-                                                           ▼
-                                                [Propose Solution & Verify]
-```
+| Technology | Purpose |
+|---|---|
+| Python | Core application logic and diagnostic workflows |
+| PySide6 | Desktop graphical user interface |
+| Qwen2.5-VL 3B | Local vision-language model for screenshot understanding |
+| Ollama | Runs the AI model locally |
+| MSS | Screenshot capture |
+| Pillow | Image processing |
+| `pathlib` and file I/O | Source-file inspection |
+| `subprocess` | Running controlled diagnostic commands and verification checks |
+| Git and GitHub | Version control and open-source collaboration |
 
----
+### Why a local AI model?
 
-## 🔒 Safety & Permissions
+SightFix uses Qwen2.5-VL through Ollama to support local inference without requiring a hosted AI API key for model inference. Actual privacy depends on the application's other integrations and network behavior.
 
-- **Explicit User Confirmation**: No source file is ever edited and no command is executed without explicit user button clicks (`Apply Fix` or `Approve & Execute`).
-- **Automatic Backups**: Before any source code modification, an exact copy is written to `<filename>.bak`. Clicking **Undo Fix** restores the original file immediately.
-- **Atomic Modification & Hash Verification**: The patch engine computes the SHA-256 hash of the file when diagnosed and verifies it before applying. If the file was modified on disk in the background, the stale patch is discarded.
-- **Sensitive File Exclusion**: Inspection and editing are blocked for files matching sensitive patterns (`.env`, `.git`, SSH keys, certificates, credentials).
-- **Separation of Concerns**: Code editing is handled through the dedicated patch engine; shell execution remains strictly governed by the command allowlist (`pip install`, `python --version`, etc.). Rerunning a script is never treated as a code repair.
+## 🖥️ Getting Started
 
----
+### Prerequisites
 
-## 🚀 Quick Start
+- Windows 10 or Windows 11
+- Python 3.10 or later
+- Git
+- Ollama
+- Sufficient RAM and storage for the selected AI model
 
-### 1. Prerequisites
-- **Python 3.11 or later**
-- (Optional) [Ollama](https://ollama.com) running locally with `qwen2.5vl:3b` or `qwen2.5-vl:7b`
-
-### 2. Install Dependencies
+### 1. Clone the repository
 
 ```bash
-cd sightfix_ai
+git clone https://github.com/YOUR_USERNAME/SightFix-AI.git
+cd SightFix-AI
+```
+
+Replace `YOUR_USERNAME` with your GitHub username and adjust the repository name if necessary.
+
+### 2. Create a virtual environment
+
+```bash
+python -m venv .venv
+```
+
+Activate it on Windows:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+If you use Command Prompt instead:
+
+```bat
+.venv\Scripts\activate.bat
+```
+
+### 3. Install dependencies
+
+If the repository contains a `requirements.txt` file:
+
+```bash
 pip install -r requirements.txt
 ```
 
-### 3. Launch the Application
+Otherwise, install the dependencies listed in the project's setup instructions. A typical initial dependency set may include:
 
-Double-click `run.bat` or run:
+```bash
+pip install PySide6 mss Pillow openai
+```
+
+### 4. Install and start Ollama
+
+Install Ollama from [ollama.com](https://ollama.com/), then download the model:
+
+```bash
+ollama pull qwen2.5vl:3b
+```
+
+Confirm that the model is available:
+
+```bash
+ollama list
+```
+
+### 5. Configure the application
+
+Configure the model name and Ollama endpoint in the application's settings or configuration file, according to the current implementation.
+
+Typical values are:
+
+```text
+Model: qwen2.5vl:3b
+Endpoint: http://localhost:11434/v1
+```
+
+Ensure Ollama is running before launching the application.
+
+### 6. Launch SightFix AI
+
+Run the application's actual entry-point file. For example, if it is named `main.py`:
 
 ```bash
 python main.py
 ```
 
-### 4. Running the Complete Test Suite
+If your entry-point file has a different name, use that filename instead.
 
-All 20 tests (including Scenarios A through F) can be run via:
+## 🔒 Security and Privacy
 
-```bash
-# Run the complete test suite
-python -m unittest discover -s tests -p "test_*.py"
+SightFix is designed around user-controlled troubleshooting.
 
-# Run specifically the Code Repair end-to-end tests (Tests A-F)
-python tests/test_repair_workflow.py
+- **User approval:** Proposed repairs should be reviewed before application.
+- **Restricted access:** File inspection should remain within the selected project directory.
+- **Command validation:** Diagnostic commands should use a controlled allowlist rather than unrestricted AI-generated shell commands.
+- **Sensitive files:** Exclude credentials, API keys, `.env` files, and other sensitive data from inspection.
+- **Backups and recovery:** Preserve original files before applying code changes.
+- **Verification:** Report success only when the relevant check actually passes.
 
-# Run the GUI component test
-python tests/test_gui.py
-```
+Local model inference does not, by itself, guarantee that all application data stays local. Users should review any external integrations and data handling before using the application with sensitive information.
 
----
+## 🗺️ Roadmap
 
-## 🧪 Verified Test Scenarios (Tests A – F)
+- [x] Desktop application foundation
+- [x] Local Qwen2.5-VL model setup through Ollama
+- [x] Initial screenshot-based error analysis
+- [ ] Reliable source-file selection and inspection
+- [ ] Structured patch generation and diff preview
+- [ ] Safe patch application, backup, and undo
+- [ ] Automated syntax and runtime verification
+- [ ] Wi-Fi and network diagnostic module
+- [ ] CPU, memory, and storage diagnostics
+- [ ] Expanded Windows application and device troubleshooting
+- [ ] Comprehensive automated tests and documentation
 
-| Scenario | Description | Status |
-|---|---|---|
-| **Test A** | **Current-file syntax repair**: `calculate_total.py` missing colon detected on line 1, patch generated and applied, `py_compile` passes with exit code 0. | ✅ PASSED |
-| **Test B** | **Previous-error isolation**: `student_management.py` (error line 15) scanned first, then `calculate_total.py` scanned. Confirmed second scan contains zero previous error artifacts. | ✅ PASSED |
-| **Test C** | **Repeated scans & race conditions**: Scan ID token invalidation prevents older async worker responses from overwriting newer scans. | ✅ PASSED |
-| **Test D** | **Rejected patch**: When user clicks `Reject`, file remains bit-for-bit identical on disk. | ✅ PASSED |
-| **Test E** | **Failed verification**: If a patch does not resolve the syntax error, `py_compile` failure is accurately reported, never claiming false success. | ✅ PASSED |
-| **Test F** | **Successful runtime**: After applying fix, running `calculate_total.py` prints `Total: 30` with return code 0. | ✅ PASSED |
+The roadmap reflects intended development work; completed items should be updated to match the current code and verified behavior.
 
----
+## 🤝 Contributing
 
-## 🤖 Model Configuration
+Contributions are welcome!
 
-SightFix AI connects to any OpenAI-compatible API endpoint:
+1. Fork this repository.
+2. Create a feature branch.
+3. Implement your change and add relevant tests.
+4. Run the available tests and verify the feature.
+5. Submit a pull request describing the change and its results.
 
-```env
-# Local Ollama (Default)
-SIGHTFIX_API_BASE=http://localhost:11434/v1
-SIGHTFIX_API_KEY=ollama
-SIGHTFIX_MODEL=qwen2.5vl:3b
+Potential contribution areas include new diagnostic modules, improved error analysis, safer repair workflows, UI improvements, documentation, and automated tests.
 
-# Hosted Provider Example (OpenRouter)
-# SIGHTFIX_API_BASE=https://openrouter.ai/api/v1
-# SIGHTFIX_API_KEY=sk-or-v1-...
-# SIGHTFIX_MODEL=qwen/qwen2.5-vl-7b-instruct
-```
+## 📌 Current Limitations
 
-You can also adjust and test connection settings live in the **⚙️ Settings** tab.
+- AI-generated diagnoses and repairs may be incorrect.
+- Screenshot analysis alone may not reveal the underlying cause.
+- Some problems require logs, source files, system access, or administrator privileges.
+- Network, driver, and hardware issues may not be fixable by software.
+- Automatic repair capabilities depend on the diagnostic and verification modules implemented.
 
----
+Always review proposed changes before applying them.
 
 ## 📄 License
 
-MIT License — see [LICENSE](LICENSE).
+This project is intended to be open source. Add a `LICENSE` file to the repository and select a license, such as the MIT License, before publishing it for reuse and contributions.
 
-Third-party libraries:
-- `PySide6-Essentials` (LGPL v3)
-- `mss` (MIT)
-- `Pillow` (HPND)
-- `openai` Python SDK (Apache 2.0)
-- `python-dotenv` (BSD-3-Clause)
-- Model: `Qwen2.5-VL` by Alibaba Cloud (Apache 2.0)
+## 👨‍💻 Project
+
+**SightFix AI — From error detection to verified repair.**
+
+Built with Python, local AI, and a focus on making technical troubleshooting easier for everyone.
