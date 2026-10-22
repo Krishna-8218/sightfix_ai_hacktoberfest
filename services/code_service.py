@@ -11,6 +11,7 @@ from typing import Optional
 from config import Config
 
 logger = logging.getLogger(__name__)
+SENSITIVE_PATTERNS = ["*.env*", "*.pem", "*.key", "id_rsa*", "*.git*"]
 
 @dataclass
 class CompilerResult:
@@ -30,7 +31,6 @@ class FileInspectionResult:
     content_hash: str
     compiler_result: CompilerResult
     error_message: Optional[str] = None
-
     @property
     def has_error(self) -> bool:
         return self.compiler_result.has_error or bool(self.error_message)
@@ -46,3 +46,15 @@ class CodePatch:
     is_valid: bool = False
     validation_error: str = ""
     source_hash: str = ""
+
+class CodeService:
+    @staticmethod
+    def is_file_safe_to_inspect(path: Path) -> tuple[bool, str]:
+        resolved = path.resolve()
+        if not resolved.exists():
+            return False, f"File does not exist: {resolved}"
+        filename = resolved.name.lower()
+        for pattern in SENSITIVE_PATTERNS:
+            if fnmatch.fnmatch(filename, pattern):
+                return False, f"Access blocked: '{filename}' matches sensitive pattern"
+        return True, "File is safe to inspect."
