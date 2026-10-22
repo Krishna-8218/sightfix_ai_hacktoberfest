@@ -9,3 +9,13 @@
 | 🛠️ **Real Code Repair** | Generates concrete, validated source-code replacement patches with unified diffs |
 | 🔒 **Safe Patch Application** | Explicit approval required; creates automatic `.bak` backups with instant **Undo Fix** |
 | 🛡️ **Stale Diagnosis Prevention** | Every scan runs with fresh state; tokenized scan IDs prevent race conditions or stale overwrites |
+
+## 🏗️ Architecture
+```
+sightfix_ai/
+├── main.py                          # Application entry point
+├── config.py                        # Configuration
+├── ui/                              # PySide6 desktop GUI
+├── services/                        # Code, Vision, Action services
+└── tests/                           # Test suites
+```
