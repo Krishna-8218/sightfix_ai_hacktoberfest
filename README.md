@@ -1,27 +1,11 @@
 # 🔍 SightFix AI — Desktop Troubleshooter & Automated Code Repair
 
-**SightFix AI** is an open-source AI desktop application that diagnoses technical problems and automatically repairs source code syntax errors.
-
-## ✨ Features
-| Feature | Description |
-|---|---|
-| 📂 **Inspect Current File** | Select a source file to read from disk and diagnose with `python -m py_compile` |
-| 🛠️ **Real Code Repair** | Generates concrete, validated source-code replacement patches with unified diffs |
-| 🔒 **Safe Patch Application** | Explicit approval required; creates automatic `.bak` backups with instant **Undo Fix** |
-| 🛡️ **Stale Diagnosis Prevention** | Every scan runs with fresh state; tokenized scan IDs prevent race conditions or stale overwrites |
-
-## 🏗️ Architecture
-```
-sightfix_ai/
-├── main.py                          # Application entry point
-├── config.py                        # Configuration
-├── ui/                              # PySide6 desktop GUI
-├── services/                        # Code, Vision, Action services
-└── tests/                           # Test suites
-```
-
-## 🔒 Safety & Permissions
-- Explicit User Confirmation
-- Automatic Backups (.bak)
-- Atomic Modification & Hash Verification
-- Sensitive File Exclusion
+## 🧪 Verified Test Scenarios (Tests A – F)
+| Scenario | Description | Status |
+|---|---|---|
+| **Test A** | **Current-file syntax repair**: `calculate_total.py` missing colon detected, patch applied, `py_compile` passes | ✅ PASSED |
+| **Test B** | **Previous-error isolation**: `student_management.py` -> `calculate_total.py` scan isolation | ✅ PASSED |
+| **Test C** | **Repeated scans & race conditions**: Scan ID token invalidation prevents stale overwrites | ✅ PASSED |
+| **Test D** | **Rejected patch**: File remains completely unchanged on disk | ✅ PASSED |
+| **Test E** | **Failed verification**: Faulty patch accurately reported as failed | ✅ PASSED |
+| **Test F** | **Successful runtime**: Script execution prints 'Total: 30' | ✅ PASSED |
