@@ -19,5 +19,15 @@ class ScreenshotService:
             monitor = sct.monitors[1] if len(sct.monitors) > 1 else sct.monitors[0]
             raw = sct.grab(monitor)
             img = Image.frombytes("RGB", raw.size, raw.bgra, "raw", "BGRX")
+        img = self._resize(img)
         self._last_screenshot = img
+        self._last_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         return img
+
+    def _resize(self, img: Image.Image) -> Image.Image:
+        max_dim = Config.MAX_IMAGE_DIM
+        if img.width <= max_dim and img.height <= max_dim:
+            return img
+        ratio = min(max_dim / img.width, max_dim / img.height)
+        new_size = (int(img.width * ratio), int(img.height * ratio))
+        return img.resize(new_size, Image.LANCZOS)
