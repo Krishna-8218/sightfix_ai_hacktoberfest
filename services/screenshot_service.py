@@ -31,3 +31,13 @@ class ScreenshotService:
         ratio = min(max_dim / img.width, max_dim / img.height)
         new_size = (int(img.width * ratio), int(img.height * ratio))
         return img.resize(new_size, Image.LANCZOS)
+
+    def image_to_base64(self, img: Image.Image, fmt: str = "PNG") -> str:
+        buf = io.BytesIO()
+        img.save(buf, format=fmt)
+        return base64.b64encode(buf.getvalue()).decode("utf-8")
+
+    def image_to_bytes(self, img: Image.Image, fmt: str = "PNG") -> bytes:
+        buf = io.BytesIO()
+        img.save(buf, format=fmt)
+        return buf.getvalue()
