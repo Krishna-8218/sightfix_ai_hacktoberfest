@@ -58,3 +58,20 @@ class CodeService:
             if fnmatch.fnmatch(filename, pattern):
                 return False, f"Access blocked: '{filename}' matches sensitive pattern"
         return True, "File is safe to inspect."
+
+    @staticmethod
+    def compile_check(file_path: Path | str) -> CompilerResult:
+        path = Path(file_path).resolve()
+        if path.suffix.lower() != ".py":
+            return CompilerResult(exit_code=0, stdout="", stderr="", has_error=False)
+        try:
+            res = subprocess.run(["python", "-m", "py_compile", str(path)], capture_output=True, text=True, timeout=10)
+            if res.returncode == 0:
+                return CompilerResult(exit_code=0, stdout=res.stdout, stderr=res.stderr, has_error=False)
+            line_no = None
+            line_match = re.search(r'line\s+(\d+)', res.stderr, re.IGNORECASE)
+            if line_match:
+                line_no = int(line_match.group(1))
+            return CompilerResult(exit_code=res.returncode, stdout=res.stdout, stderr=res.stderr.strip(), has_error=True, error_line=line_no, error_type="SyntaxError", error_msg=res.stderr.strip())
+        except Exception as e:
+            return CompilerResult(exit_code=1, stdout="", stderr=str(e), has_error=True, error_msg=str(e))
