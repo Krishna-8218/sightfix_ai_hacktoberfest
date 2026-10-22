@@ -1,6 +1,6 @@
 # 🔍 SightFix AI — Desktop Troubleshooter & Automated Code Repair
 
-**SightFix AI** is an open-source AI desktop application that diagnoses technical problems and automatically repairs source code syntax errors. It combines **desktop visual troubleshooting** with **direct source-code compiler analysis (`py_compile`)**, generating concrete, validated diff patches, safely applying them with automatic backups, and verifying results.
+**SightFix AI** is an open-source AI desktop application that diagnoses technical problems and automatically repairs source code. It combines **desktop visual troubleshooting** with **direct source-code compiler analysis (`py_compile`)**, generating concrete, validated diff patches, safely applying them with automatic backups, and verifying results.
 
 > **Built for the Open Source AI Hackathon**
 
