@@ -18,3 +18,8 @@ class Config:
     APP_NAME: str = "SightFix AI"
     APP_VERSION: str = "1.0.0"
     APP_DESCRIPTION: str = "AI-Powered Desktop Troubleshooter"
+
+    SAFE_COMMANDS_ALLOWLIST: list[str] = [
+        "pip install", "pip list", "python --version", "pip --version",
+        "systeminfo", "ipconfig", "hostname", "whoami", "tasklist", "echo",
+    ]
