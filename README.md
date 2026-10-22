@@ -19,3 +19,7 @@ sightfix_ai/
 ├── services/                        # Code, Vision, Action services
 └── tests/                           # Test suites
 ```
+
+## 🔄 Two Troubleshooting Workflows
+1. **Source Code Inspection & Repair Workflow**
+2. **Desktop Screenshot Diagnosis Workflow**
